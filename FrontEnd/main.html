@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <table border="3" id="vendasTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Preço Unitário</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function carregarVendas() {
+            const response = await fetch("http://127.0.0.1:8000/vendas");
+            const data = await response.json();
+            const tbody = document.querySelector("#vendasTable tbody");
+
+            for (const id in data) {
+                const venda = data[id];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${id}</td>
+                    <td>${venda.item}</td>
+                    <td>${venda.preco_unitario}</td>
+                    <td>${venda.quantidade}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        carregarVendas();
+    </script>
+</body>
+</html>

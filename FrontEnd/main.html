@@ -1,40 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Minha Carteira</title>
 </head>
 <body>
-    
-    <table border="3" id="tabelaacoes">
+    <h1>Minhas Ações</h1>
+
+    <table border="1" id="tabela">
         <thead>
             <tr>
-                <th>Ações</th>
-                <th>Valor atual da cota</th>
+                <th>ID</th>
+                <th>Ticker</th>
+                <th>Quantidade</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <h2>Adicionar Ação</h2>
+    <input id="ticker" placeholder="Ticker (ex: PETR4)">
+    <input id="quantidade" type="number" placeholder="Quantidade">
+    <button onclick="addAcao()">Adicionar</button>
+
     <script>
-        async function getacoes() {
+        async function carregar() {
             const response = await fetch("http://127.0.0.1:8000/acoes");
             const data = await response.json();
-            const tbody = document.querySelector("#tabelaacoes tbody");
+            const tbody = document.querySelector("#tabela tbody");
+            tbody.innerHTML = "";
 
-            for (const ticker in data) {
-                const acao = data[ticker];
-                const cota = acao.Cota;
+            data.forEach(acao => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${ticker}</td>
-                    <td>${cota}</td>
+                    <td>${acao.id}</td>
+                    <td>${acao.ticker}</td>
+                    <td>${acao.quantidade}</td>
                 `;
                 tbody.appendChild(row);
-            }
+            });
         }
-        getacoes();
+
+        async function addAcao() {
+            const ticker = document.getElementById("ticker").value;
+            const quantidade = document.getElementById("quantidade").value;
+            await fetch(`http://127.0.0.1:8000/acoes/add/${ticker}/${quantidade}`, { method: "POST" });
+            carregar();
+        }
+
+        carregar();
     </script>
 </body>
 </html>

@@ -11,18 +11,40 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-vendas = {
-
-    1: {"item": "Lata", "preco_unitario": 4, "quantidade": 5},
-    2: {"item": "garrafa 2L", "preco_unitario": 15, "quantidade": 5},
-    3: {"item": "garrafa 750ml", "preco_unitario": 10, "quantidade": 5},
-    4: {"item": "lata mini", "preco_unitario": 2, "quantidade": 5}
-
+acoes = {
+    "CMIG4": {"Cota": 19},
+    "BBSE3": {"Cota": 19},
+    "TAEE11": {"Cota": 0},
+    "BBAS3": {"Cota": 0},
+    "DIRR3": {"Cota": 0},
+    "ITSA4": {"Cota": 0},
+    "BBDC4": {"Cota": 0},
+    "CPLE6": {"Cota": 0},
+    "PETR4": {"Cota": 0},
+    "POMO4": {"Cota": 0},
+    "CURY3": {"Cota": 0},
+    "BRAP4": {"Cota": 0},
+    "VALE3": {"Cota": 0},
+    "CMIN3": {"Cota": 0},
+    "MBRF": {"Cota": 0},
+    "CXSE3": {"Cota": 0},
+    "PSSA3": {"Cota": 0},
+    "EQTL3": {"Cota": 0},
+    "ABEV3": {"Cota": 0},
+    "CPFE3": {"Cota": 0},
+    "ITSA3": {"Cota": 0},
+    "RADL3": {"Cota": 0},
+    "B3SA3": {"Cota": 0},
+    "WEGE3": {"Cota": 0},
+    "EGIE3": {"Cota": 0},
+    "AUVP11": {"Cota": 0}
 }
 
-@app.get("/vendas")
-def GetVenda():
-    return vendas
+
+
+@app.get("/acoes")
+def Get_acoes():
+    return acoes
 
 
 

@@ -24,16 +24,13 @@
     <button onclick="addAcao()">Adicionar</button>
 
     <script>
-        async function carregar() {
-            const response = await fetch("http://127.0.0.1:8000/acoes");
-            const data = await response.json();
+        function renderizar(data) {
             const tbody = document.querySelector("#tabela tbody");
             tbody.innerHTML = "";
-
-            data.forEach(acao => {
+            data.forEach((acao, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${acao.id}</td>
+                    <td>${acao.id || index + 1}</td>
                     <td>${acao.ticker}</td>
                     <td>${acao.quantidade}</td>
                 `;
@@ -41,14 +38,54 @@
             });
         }
 
+        async function carregar() {
+            let localData = JSON.parse(localStorage.getItem("acoes")) || [];
+            renderizar(localData);
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/acoes");
+                const data = await response.json();
+
+                if (data.length > 0) {
+                    // Atualiza o localStorage com os dados do back
+                    localStorage.setItem("acoes", JSON.stringify(data));
+                    renderizar(data);
+                } else if (localData.length > 0) {
+                    // Se o banco está vazio mas há dados locais, sincroniza
+                    await fetch("http://127.0.0.1:8000/acoes/sync", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(localData)
+                    });
+                    console.log("Banco vazio → sincronizado com LocalStorage");
+                }
+            } catch (error) {
+                console.log("Backend não disponível, usando apenas localStorage");
+            }
+        }
+
         async function addAcao() {
             const ticker = document.getElementById("ticker").value;
             const quantidade = document.getElementById("quantidade").value;
-            await fetch(`http://127.0.0.1:8000/acoes/add/${ticker}/${quantidade}`, { method: "POST" });
+
+            // Tenta salvar no backend
+            try {
+                await fetch(`http://127.0.0.1:8000/acoes/add/${ticker}/${quantidade}`, { method: "POST" });
+            } catch (error) {
+                console.log("Backend indisponível, salvando apenas localStorage");
+            }
+
+            // Sempre salva no localStorage
+            let data = JSON.parse(localStorage.getItem("acoes")) || [];
+            data.push({ ticker, quantidade });
+            localStorage.setItem("acoes", JSON.stringify(data));
+
             carregar();
         }
 
         carregar();
     </script>
+
+
 </body>
 </html>
